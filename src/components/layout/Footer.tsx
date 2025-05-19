@@ -44,7 +44,7 @@ const Footer: FC = () => {
               <a href="https://linkedin.com/in/sujeetgund" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="hover:text-primary transition-colors">
                 <Linkedin size={24} />
               </a>
-               <a href="mailto:sujeetgund@example.com" aria-label="Email" className="hover:text-primary transition-colors">
+               <a href="mailto:sujeetgund@gmail.com" aria-label="Email" className="hover:text-primary transition-colors">
                 <Mail size={24} />
               </a>
             </div>
