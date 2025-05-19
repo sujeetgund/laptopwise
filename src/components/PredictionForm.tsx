@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { FC } from 'react';
@@ -23,8 +24,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { LAPTOP_COMPANIES, LAPTOP_TYPES, LAPTOP_OS } from '@/lib/constants';
+import { LAPTOP_COMPANIES, LAPTOP_TYPES, LAPTOP_OS, LAPTOP_GPU_CATEGORIES } from '@/lib/constants';
 import { validateLaptopSpecs, type ValidateLaptopSpecsInput } from '@/ai/flows/validate-laptop-specs';
+import { predictLaptopPrice, type PredictLaptopPriceInput } from '@/ai/flows/predict-laptop-price-flow';
 import { useToast } from '@/hooks/use-toast';
 import { Wand2 } from 'lucide-react';
 
@@ -37,6 +39,16 @@ const formSchema = z.object({
   ipsPanel: z.boolean().default(false),
   touchscreen: z.boolean().default(false),
   weight: z.coerce.number().min(0.1, { message: "Weight must be positive." }).max(10, { message: "Weight seems too high." }),
+  
+  inches: z.coerce.number().min(7, "Screen size seems too small.").max(24, "Screen size seems too large."),
+  ram: z.coerce.number().min(1, "RAM must be at least 1GB.").max(128, "RAM seems too high (max 128GB)."), 
+  cpuCategory: z.string().min(1, "CPU category is required."),
+  cpuSpeedGhz: z.coerce.number().min(0.5, "CPU speed seems too low.").max(6, "CPU speed seems too high."),
+  gpuCategory: z.string().min(1, "GPU category is required."),
+  ssd: z.coerce.number().min(0, "SSD size cannot be negative.").max(8000, "SSD size seems too high (max 8TB)."), 
+  hdd: z.coerce.number().min(0, "HDD size cannot be negative.").max(16000, "HDD size seems too high (max 16TB)."), 
+  flash: z.coerce.number().min(0, "Flash storage cannot be negative.").max(2000, "Flash storage seems too high (max 2TB)."), 
+  hybrid: z.coerce.number().min(0, "Hybrid storage cannot be negative.").max(2000, "Hybrid storage seems too high (max 2TB)."), 
 });
 
 type PredictionFormValues = z.infer<typeof formSchema>;
@@ -59,6 +71,15 @@ const PredictionForm: FC<PredictionFormProps> = ({ setPrice, setError, setIsLoad
       ipsPanel: false,
       touchscreen: false,
       weight: 1.5,
+      inches: 15.6,
+      ram: 8,
+      cpuCategory: 'Intel Core i5',
+      cpuSpeedGhz: 2.5,
+      gpuCategory: LAPTOP_GPU_CATEGORIES.includes('Intel Mid-End') ? 'Intel Mid-End' : '',
+      ssd: 256,
+      hdd: 0,
+      flash: 0,
+      hybrid: 0,
     },
   });
 
@@ -68,26 +89,35 @@ const PredictionForm: FC<PredictionFormProps> = ({ setPrice, setError, setIsLoad
     setError(null);
 
     try {
-      const aiInput: ValidateLaptopSpecsInput = { ...data };
-      const validationResult = await validateLaptopSpecs(aiInput);
+      const validationInput: ValidateLaptopSpecsInput = { ...data };
+      const validationResult = await validateLaptopSpecs(validationInput);
 
-      if (validationResult.isValid) {
-        // Mock price prediction
-        const mockPrice = (Math.random() * 1500 + 500).toFixed(2);
-        setPrice(mockPrice);
-        toast({
-          title: "Prediction Successful!",
-          description: `Estimated laptop price: $${mockPrice}`,
-          variant: "default",
-        });
-      } else {
+      if (!validationResult.isValid) {
         setError(validationResult.reason || "Invalid specifications provided.");
         toast({
           title: "Validation Error",
           description: validationResult.reason || "Please check your inputs.",
           variant: "destructive",
         });
+        setIsLoading(false);
+        return;
       }
+
+      const pricePredictionInput: PredictLaptopPriceInput = { ...data }; 
+      
+      const predictionApiResult = await predictLaptopPrice(pricePredictionInput);
+      const predictedPrice = predictionApiResult.predictedPrice.toFixed(2);
+      setPrice(predictedPrice);
+
+      let toastDescription = `Estimated laptop price: ₹${predictedPrice}.`;
+
+      toast({
+        title: "Prediction Successful!",
+        description: toastDescription,
+        variant: "default",
+        duration: 7000, 
+      });
+
     } catch (e) {
       console.error("Error during prediction:", e);
       const errorMessage = e instanceof Error ? e.message : "An unexpected error occurred.";
@@ -202,9 +232,147 @@ const PredictionForm: FC<PredictionFormProps> = ({ setPrice, setError, setIsLoad
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="inches"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Screen Size (Inches)</FormLabel>
+                <FormControl>
+                  <Input type="number" step="0.1" placeholder="e.g., 15.6" {...field} className="bg-input/50 border-border/50 focus:ring-primary" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <FormField
+            control={form.control}
+            name="ram"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>RAM (GB)</FormLabel>
+                <FormControl>
+                  <Input type="number" step="1" placeholder="e.g., 8" {...field} className="bg-input/50 border-border/50 focus:ring-primary" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="cpuSpeedGhz"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>CPU Speed (GHz)</FormLabel>
+                <FormControl>
+                  <Input type="number" step="0.1" placeholder="e.g., 2.5" {...field} className="bg-input/50 border-border/50 focus:ring-primary" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        
+        <FormField
+            control={form.control}
+            name="cpuCategory"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>CPU Category</FormLabel>
+                <FormControl>
+                  <Input placeholder="e.g., Intel Core i7" {...field} className="bg-input/50 border-border/50 focus:ring-primary" />
+                </FormControl>
+                 <FormDescription>Enter CPU model like "Intel Core i5", "AMD Ryzen 7", etc.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+        <FormField
+            control={form.control}
+            name="gpuCategory"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>GPU Category</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="bg-input/50 border-border/50 focus:ring-primary">
+                      <SelectValue placeholder="Select GPU category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {LAPTOP_GPU_CATEGORIES.map((gpu) => (
+                      <SelectItem key={gpu} value={gpu}>{gpu}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        
+        <p className="text-sm font-medium text-foreground/90 pt-2">Storage (GB):</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <FormField
+            control={form.control}
+            name="ssd"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>SSD</FormLabel>
+                <FormControl>
+                  <Input type="number" step="1" placeholder="e.g., 256" {...field} className="bg-input/50 border-border/50 focus:ring-primary" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="hdd"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>HDD</FormLabel>
+                <FormControl>
+                  <Input type="number" step="1" placeholder="e.g., 1000" {...field} className="bg-input/50 border-border/50 focus:ring-primary" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="flash"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Flash</FormLabel>
+                <FormControl>
+                  <Input type="number" step="1" placeholder="e.g., 64" {...field} className="bg-input/50 border-border/50 focus:ring-primary" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="hybrid"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Hybrid</FormLabel>
+                <FormControl>
+                  <Input type="number" step="1" placeholder="e.g., 0" {...field} className="bg-input/50 border-border/50 focus:ring-primary" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8 items-center pt-4">
           <FormField
             control={form.control}
             name="ipsPanel"
@@ -254,3 +422,4 @@ const PredictionForm: FC<PredictionFormProps> = ({ setPrice, setError, setIsLoad
 };
 
 export default PredictionForm;
+    

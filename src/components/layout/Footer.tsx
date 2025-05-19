@@ -49,6 +49,18 @@ const Footer: FC = () => {
               </a>
             </div>
             <p className="text-sm">Created by Sujeet Gund.</p>
+            <p className="text-sm mt-2">
+              Price prediction powered by the{' '}
+              <a
+                href="https://github.com/sujeetgund/laptop-price-prediction"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-primary transition-colors"
+              >
+                Laptop Price Prediction model
+              </a>
+              {' '}developed by Sujeet Gund.
+            </p>
           </div>
         </div>
         <div className="border-t border-border/40 pt-8 flex flex-col sm:flex-row justify-between items-center text-sm">

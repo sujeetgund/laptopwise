@@ -2,7 +2,8 @@
 
 import type { FC } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { AlertCircle, CheckCircle2, Loader2, DollarSign } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'; // Removed DollarSign as we'll use text
+import { IndianRupee } from 'lucide-react'; // Added IndianRupee icon
 
 interface PredictionResultProps {
   price: string | null;
@@ -49,14 +50,14 @@ const PredictionResult: FC<PredictionResultProps> = ({ price, error, isLoading }
       <Card className="w-full max-w-md mx-auto mt-8 animate-fadeInUp bg-card/70 backdrop-blur-sm shadow-xl border-primary/50">
         <CardHeader className="text-center">
           <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
-            <DollarSign className="h-8 w-8 text-primary" />
+            <IndianRupee className="h-8 w-8 text-primary" />
           </div>
           <CardTitle className="text-3xl font-bold text-primary">Estimated Price</CardTitle>
           <CardDescription className="text-foreground/80">Based on the provided specifications.</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-center text-5xl font-extrabold text-foreground mb-2">
-            ${price}
+            ₹{price}
           </p>
           <p className="text-center text-sm text-foreground/70">
             This is an estimate. Actual market prices may vary.
