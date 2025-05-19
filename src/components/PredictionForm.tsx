@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { LAPTOP_COMPANIES, LAPTOP_TYPES, LAPTOP_OS, LAPTOP_GPU_CATEGORIES } from '@/lib/constants';
+import { LAPTOP_COMPANIES, LAPTOP_TYPES, LAPTOP_OS, LAPTOP_GPU_CATEGORIES, LAPTOP_CPU_CATEGORIES } from '@/lib/constants';
 import { validateLaptopSpecs, type ValidateLaptopSpecsInput } from '@/ai/flows/validate-laptop-specs';
 import { predictLaptopPrice, type PredictLaptopPriceInput } from '@/ai/flows/predict-laptop-price-flow';
 import { useToast } from '@/hooks/use-toast';
@@ -73,7 +73,7 @@ const PredictionForm: FC<PredictionFormProps> = ({ setPrice, setError, setIsLoad
       weight: 1.5,
       inches: 15.6,
       ram: 8,
-      cpuCategory: 'Intel Core i5',
+      cpuCategory: 'Intel Core i5', // This is a valid default from the list
       cpuSpeedGhz: 2.5,
       gpuCategory: LAPTOP_GPU_CATEGORIES.includes('Intel Mid-End') ? 'Intel Mid-End' : '',
       ssd: 256,
@@ -283,10 +283,18 @@ const PredictionForm: FC<PredictionFormProps> = ({ setPrice, setError, setIsLoad
             render={({ field }) => (
               <FormItem>
                 <FormLabel>CPU Category</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Intel Core i7" {...field} className="bg-input/50 border-border/50 focus:ring-primary" />
-                </FormControl>
-                 <FormDescription>Enter CPU model like "Intel Core i5", "AMD Ryzen 7", etc.</FormDescription>
+                 <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="bg-input/50 border-border/50 focus:ring-primary">
+                      <SelectValue placeholder="Select CPU category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {LAPTOP_CPU_CATEGORIES.map((cpu) => (
+                      <SelectItem key={cpu} value={cpu}>{cpu}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -422,4 +430,3 @@ const PredictionForm: FC<PredictionFormProps> = ({ setPrice, setError, setIsLoad
 };
 
 export default PredictionForm;
-    

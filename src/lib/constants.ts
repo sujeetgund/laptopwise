@@ -21,3 +21,9 @@ export const LAPTOP_GPU_CATEGORIES = [
   'Nvidia Mid-End', 'Intel Mid-End', 'Nvidia High-End', 'AMD Mid-End',
   'Nvidia Low-End', 'AMD Other', 'Nvidia Quadro', 'AMD Firepro', 'Intel Other'
 ];
+
+export const LAPTOP_CPU_CATEGORIES = [
+  'Intel Core i5', 'Intel Core i7', 'AMD A9', 'Intel Core i3', 'Other Intel',
+  'AMD E-Series', 'AMD A6', 'AMD Ryzen', 'AMD FX', 'AMD A10', 'AMD A8', 'AMD A12',
+  'AMD A4'
+];
