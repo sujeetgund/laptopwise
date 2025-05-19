@@ -8,25 +8,25 @@ const insights = [
   {
     title: 'Do Apple Laptops Cost More?',
     description: "Generally, Apple laptops command a premium due to their ecosystem, build quality, and brand value. Our data indicates they often have higher resale values as well.",
-    imageUrl: '/images/apple-laptops-cost.jpg',
+    imageUrl: '/images/apple-laptops-cost.png', // Changed to .png
     imageAlt: 'Chart comparing Apple laptop prices',
   },
   {
     title: 'Is a Touchscreen Worth It?',
     description: "Touchscreens add versatility, especially for 2-in-1 convertibles. However, they can increase cost and potentially reduce battery life. Consider your use case.",
-    imageUrl: '/images/touchscreen-worth.jpg',
+    imageUrl: '/images/touchscreen-worth.png', // Changed to .png
     imageAlt: 'Laptop with touchscreen feature highlighted',
   },
   {
     title: 'Impact of RAM on Price',
     description: "More RAM generally means better multitasking performance and a higher price. 8GB is standard, 16GB is good for most users, while 32GB+ is for demanding tasks.",
-    imageUrl: '/images/ram-impact-price.jpg',
+    imageUrl: '/images/ram-impact-price.png', // Changed to .png
     imageAlt: 'Graph showing RAM vs Price correlation',
   },
   {
     title: 'SSD vs HDD: Price & Performance',
     description: "SSDs (Solid State Drives) are much faster than HDDs (Hard Disk Drives) and significantly impact performance and price. Most modern laptops feature SSDs.",
-    imageUrl: '/images/ssd-vs-hdd.jpg',
+    imageUrl: '/images/ssd-vs-hdd.png', // Changed to .png
     imageAlt: 'Comparison of SSD and HDD speeds and prices',
   },
 ];
@@ -72,7 +72,6 @@ const InsightsSection: FC = () => {
               description={insight.description}
               imageUrl={insight.imageUrl}
               imageAlt={insight.imageAlt}
-              dataAiHint={insight.dataAiHint} 
               animationDelay={`${index * 0.2 + 0.6}s`}
             />
           ))}
