@@ -1,3 +1,4 @@
+
 import type { FC } from 'react';
 import InsightCard from '@/components/InsightCard';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,28 +10,24 @@ const insights = [
     description: "Generally, Apple laptops command a premium due to their ecosystem, build quality, and brand value. Our data indicates they often have higher resale values as well.",
     imageUrl: '/images/apple-laptops-cost.jpg',
     imageAlt: 'Chart comparing Apple laptop prices',
-    dataAiHint: 'laptop price chart',
   },
   {
     title: 'Is a Touchscreen Worth It?',
     description: "Touchscreens add versatility, especially for 2-in-1 convertibles. However, they can increase cost and potentially reduce battery life. Consider your use case.",
     imageUrl: '/images/touchscreen-worth.jpg',
     imageAlt: 'Laptop with touchscreen feature highlighted',
-    dataAiHint: 'touchscreen laptop',
   },
   {
     title: 'Impact of RAM on Price',
     description: "More RAM generally means better multitasking performance and a higher price. 8GB is standard, 16GB is good for most users, while 32GB+ is for demanding tasks.",
     imageUrl: '/images/ram-impact-price.jpg',
     imageAlt: 'Graph showing RAM vs Price correlation',
-    dataAiHint: 'ram price graph',
   },
   {
     title: 'SSD vs HDD: Price & Performance',
     description: "SSDs (Solid State Drives) are much faster than HDDs (Hard Disk Drives) and significantly impact performance and price. Most modern laptops feature SSDs.",
     imageUrl: '/images/ssd-vs-hdd.jpg',
     imageAlt: 'Comparison of SSD and HDD speeds and prices',
-    dataAiHint: 'ssd hdd comparison',
   },
 ];
 
@@ -75,7 +72,7 @@ const InsightsSection: FC = () => {
               description={insight.description}
               imageUrl={insight.imageUrl}
               imageAlt={insight.imageAlt}
-              dataAiHint={insight.dataAiHint}
+              dataAiHint={insight.dataAiHint} 
               animationDelay={`${index * 0.2 + 0.6}s`}
             />
           ))}
