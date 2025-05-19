@@ -9,7 +9,7 @@ const Logo: FC<LogoProps> = ({ className = '' }) => {
   return (
     <Link href="/" className={`text-xl md:text-2xl font-bold transition-opacity hover:opacity-80 ${className}`}>
       <span className="text-primary">sujeetgund</span>
-      <span className="text-foreground">/laptop-predictor</span>
+      <span className="text-foreground">/laptopwise</span>
     </Link>
   );
 };
